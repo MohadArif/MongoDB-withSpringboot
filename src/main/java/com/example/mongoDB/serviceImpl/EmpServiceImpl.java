@@ -24,11 +24,12 @@ public class EmpServiceImpl implements EmpService {
 
     private final EmpRepository empRepository;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+//    @Autowired
+    private final MongoTemplate mongoTemplate;
 
-    public EmpServiceImpl(EmpRepository empRepository) {
+    public EmpServiceImpl(EmpRepository empRepository,MongoTemplate mongoTemplate) {
         this.empRepository = empRepository;
+        this.mongoTemplate=mongoTemplate;
     }
 
     @Override

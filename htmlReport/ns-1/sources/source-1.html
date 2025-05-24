@@ -1,0 +1,257 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EmpServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.mongoDB.serviceImpl</a>
+</div>
+
+<h1>Coverage Summary for Class: EmpServiceImpl (com.example.mongoDB.serviceImpl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EmpServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92.3%
+  </span>
+  <span class="absValue">
+    (12/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (8/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    87.5%
+  </span>
+  <span class="absValue">
+    (42/48)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.mongoDB.serviceImpl;
+&nbsp;
+&nbsp;import com.example.mongoDB.entity.Employee;
+&nbsp;import com.example.mongoDB.exception.EmployeeNotFoundException;
+&nbsp;import com.example.mongoDB.repositroy.EmpRepository;
+&nbsp;import com.example.mongoDB.service.EmpService;
+&nbsp;import lombok.extern.log4j.Log4j2;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.data.domain.Page;
+&nbsp;import org.springframework.data.domain.PageRequest;
+&nbsp;import org.springframework.data.domain.Pageable;
+&nbsp;import org.springframework.data.domain.Sort;
+&nbsp;import org.springframework.data.mongodb.core.MongoTemplate;
+&nbsp;import org.springframework.data.mongodb.core.query.Criteria;
+&nbsp;import org.springframework.data.mongodb.core.query.Query;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Service
+<b class="fc">&nbsp;@Log4j2</b>
+&nbsp;public class EmpServiceImpl implements EmpService {
+&nbsp;
+&nbsp;    private final EmpRepository empRepository;
+&nbsp;
+&nbsp;//    @Autowired
+&nbsp;    private final MongoTemplate mongoTemplate;
+&nbsp;
+<b class="fc">&nbsp;    public EmpServiceImpl(EmpRepository empRepository,MongoTemplate mongoTemplate) {</b>
+<b class="fc">&nbsp;        this.empRepository = empRepository;</b>
+<b class="fc">&nbsp;        this.mongoTemplate=mongoTemplate;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void createEmployee(Employee employee) {
+<b class="fc">&nbsp;        empRepository.save(employee);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;Employee&gt; findAllEmp() {
+<b class="fc">&nbsp;        return empRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Employee findEmployeeById(String id) {
+<b class="fc">&nbsp;        return empRepository.findById(id).orElseThrow(() -&gt; {</b>
+<b class="nc">&nbsp;            log.info(&quot;employee not find with this {}&quot;, id);</b>
+<b class="nc">&nbsp;            return new EmployeeNotFoundException(&quot;employee is not found!!&quot;);</b>
+&nbsp;        });
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional(rollbackFor = Exception.class)
+&nbsp;    @Override
+&nbsp;    public void updateEmplyee(Employee employee) {
+<b class="fc">&nbsp;        Employee existingEmp = empRepository.findById(employee.getId())</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new EmployeeNotFoundException(&quot;sorry employee not found&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;        log.info(existingEmp.getEmpName(), &quot;{} fetched from database perfectly!!&quot;);</b>
+<b class="pc">&nbsp;        if (existingEmp.getEmpName() != null &amp;&amp; !existingEmp.getEmpName().equals(employee.getEmpName())) {</b>
+<b class="fc">&nbsp;            existingEmp.setEmpName(employee.getEmpName());</b>
+<b class="fc">&nbsp;            log.info(employee.getEmpName() + &quot; updated into existing employee&quot;);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (existingEmp.getEmpCode() != null &amp;&amp; !existingEmp.getEmpCode().equals(employee.getEmpCode())) {</b>
+<b class="fc">&nbsp;            existingEmp.setEmpCode(employee.getEmpCode());</b>
+<b class="fc">&nbsp;            log.info(employee.getEmpCode() + &quot; updated into existing employee&quot;);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (existingEmp.getAddress() != null &amp;&amp; !existingEmp.getAddress().equals(employee.getAddress())) {</b>
+<b class="fc">&nbsp;            existingEmp.setAddress(employee.getAddress());</b>
+<b class="fc">&nbsp;            log.info(employee.getAddress() + &quot; updated into existing employee&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        empRepository.save(existingEmp);</b>
+<b class="fc">&nbsp;        log.info(&quot;data updated successfully...&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void deleteEmployee(String id) {
+&nbsp;//        if(empRepository.findById(id).isPresent()){
+&nbsp;//        empRepository.deleteById(id);
+&nbsp;//        }else {
+&nbsp;//            throw  new EmployeeNotFoundException(&quot;sorry id doesn&#39;t exist!!&quot;);
+&nbsp;//        }
+&nbsp;
+<b class="fc">&nbsp;        Employee employee = empRepository.findById(id)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new EmployeeNotFoundException(&quot;sorry id doesn&#39;t exist!!&quot;));</b>
+<b class="fc">&nbsp;        empRepository.deleteById(employee.getId());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Employee findEmpByName(String name) {
+<b class="fc">&nbsp;        return empRepository.getEmployeeByName(name);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Employee findEmployeeByEmpCode(Long empCode) {
+<b class="fc">&nbsp;        log.info(&quot;data fetch successfully...!!&quot;);</b>
+<b class="fc">&nbsp;        return empRepository.getEmployeeByEmpCode(empCode)</b>
+<b class="fc">&nbsp;                .orElseThrow(() -&gt; new EmployeeNotFoundException(&quot;sorry this empCode is not found!!&quot;));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;Employee&gt; findAllEmployeeBasedOnCity(String address) {
+<b class="fc">&nbsp;        Query query = new Query();</b>
+<b class="fc">&nbsp;        query.addCriteria(Criteria.where(&quot;address&quot;).is(address));</b>
+<b class="fc">&nbsp;        List&lt;Employee&gt; employees = mongoTemplate.find(query, Employee.class);</b>
+<b class="pc">&nbsp;        if (employees.isEmpty()) {</b>
+<b class="nc">&nbsp;            log.error(&quot;No employee found with address: {}&quot;, address);</b>
+<b class="nc">&nbsp;            throw new EmployeeNotFoundException(&quot;No employee found with address:&quot; + address);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return employees;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Page&lt;Employee&gt; getSortedEmplpyee(int pageNo, String sort, int pageSize) {
+<b class="fc">&nbsp;        Pageable pageable = PageRequest.of(pageNo, pageSize, Sort.by(sort));</b>
+<b class="fc">&nbsp;        Page&lt;Employee&gt; employeePage = empRepository.findAll(pageable);</b>
+<b class="fc">&nbsp;        log.info(&quot;data sorted successfully and page size {}&quot;, employeePage.getSize());</b>
+<b class="fc">&nbsp;        return employeePage;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public List&lt;Employee&gt; getEmployeeEmplCodeBetween(Long minEmpCode, Long maxEmpCode) {
+<b class="fc">&nbsp;        Query query = new Query();</b>
+<b class="fc">&nbsp;        query.addCriteria(Criteria.where(&quot;empCode&quot;).gt(minEmpCode).lt(maxEmpCode));</b>
+&nbsp;
+&nbsp;//        we can add multiple query here.... example
+&nbsp;//        query.addCriteria(Criteria.where(&quot;address&quot;).is(&quot;something&quot;));  //here it also filter on the basis of these criteria
+&nbsp;
+&nbsp;//        if you want to use Or operator then
+&nbsp;//        Criteria criteria = new Criteria();
+&nbsp;//        query.addCriteria(criteria.orOperator(Criteria.where(&quot;empCode&quot;).gt(minEmpCode).lt(maxEmpCode),
+&nbsp;//                Criteria.where(&quot;address&quot;).is(&quot;something&quot;)
+&nbsp;//        ));
+&nbsp;
+<b class="fc">&nbsp;        List&lt;Employee&gt; employees = mongoTemplate.find(query, Employee.class);</b>
+<b class="pc">&nbsp;        if (employees.isEmpty()) {</b>
+<b class="nc">&nbsp;            log.error(&quot;sorry there is employee between {} - {}&quot;, minEmpCode, maxEmpCode);</b>
+<b class="nc">&nbsp;            throw new EmployeeNotFoundException(&quot;not found!!&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return employees;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-24 23:21</div>
+</div>
+</body>
+</html>
